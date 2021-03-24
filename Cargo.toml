@@ -10,7 +10,8 @@ edition = "2018"
 deflate="0.9"
 plotters="0.3"
 itertools="0.10"
-# rayon="1.5"
+rayon="1.5"
+getopts="0.2"
 
 [profile.release]
 debug = true
