@@ -6,19 +6,26 @@ use std::fs::File;
 use entrs::*;
 use getopts::Options;
 
-
 fn main() -> Result<(), Box<dyn Error>>{
     let mut opts = Options::new();
     opts.reqopt("f", "file", "Input data", "FILE");
     opts.optopt("o", "output", "Plot output", "FILE");
     opts.optopt("w", "window-size", "Compression window size", "SIZE");
     opts.optopt("s", "step-by", "Window setp size", "SIZE");
-    
+    opts.optflag("h", "help", "print this help menu");
+
     let matches = opts.parse(args().skip(1))
-        .expect("Invalid arguments");
+        .unwrap_or_else(|e| {
+            panic!("Invalid arguments: {}\n{}", e, opts.usage("Usage: entrs -f FILE [OPTIONS]"));
+        });
+
+    if matches.opt_present("h") {
+        println!("{}", opts.usage("Usage: entrs -f FILE [OPTIONS]"));
+        return Ok(());
+    }
 
     let file = matches.opt_str("f").expect("Missing FILE");
-    let out = matches.opt_str("o").unwrap_or("plot.bmp".to_owned());
+    let out = matches.opt_str("o").unwrap_or("plot.png".to_owned());
 
     let w = matches.opt_str("w")
         .map(|s| s.parse().expect("Invalid w"))
